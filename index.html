@@ -1,1056 +1,1114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ES6 Learning Outcomes — Student Tech Store</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ES6 Learning Lab — Student Registry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #1a1a26;
+      --border: #2a2a3e;
+      --accent: #00ffcc;
+      --accent2: #ff4d6d;
+      --accent3: #ffd166;
+      --accent4: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --console-bg: #0d0d14;
+      --console-text: #00ffcc;
+      --console-warn: #ffd166;
+      --console-error: #ff4d6d;
+      --console-info: #60b4ff;
+    }
 
-  :root {
-    --bg: #0d0f14;
-    --surface: #13161e;
-    --card: #1a1d28;
-    --border: #2a2d3a;
-    --accent: #7c6af7;
-    --accent2: #3ecf8e;
-    --accent3: #f59e0b;
-    --accent4: #f06292;
-    --accent5: #38bdf8;
-    --text: #e8eaf2;
-    --muted: #6b7180;
-    --danger: #f87171;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Sora', sans-serif;
-  }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-  /* ── TOP HEADER ── */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-logo {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: .06em;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .header-logo span { color: var(--muted); }
-  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 1px solid;
-    letter-spacing: .04em;
-  }
-  .badge-purple { color: var(--accent); border-color: var(--accent); }
-  .badge-green  { color: var(--accent2); border-color: var(--accent2); }
-  .badge-amber  { color: var(--accent3); border-color: var(--accent3); }
-  .badge-pink   { color: var(--accent4); border-color: var(--accent4); }
-  .badge-blue   { color: var(--accent5); border-color: var(--accent5); }
+    /* GRID BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-  /* ── LAYOUT ── */
-  .page { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
+    .page-wrap { position: relative; z-index: 1; }
 
-  /* ── SIDEBAR ── */
-  aside {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 1.5rem 0;
-    position: sticky;
-    top: 56px;
-    height: calc(100vh - 56px);
-    overflow-y: auto;
-  }
-  .aside-section { padding: 0 1.25rem 1.25rem; }
-  .aside-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    margin-bottom: .75rem;
-    padding-bottom: .4rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 8px; cursor: pointer;
-    font-size: 13px; color: var(--muted);
-    transition: all .15s;
-    margin-bottom: 2px;
-  }
-  .nav-item:hover { background: var(--card); color: var(--text); }
-  .nav-item.active { background: #1e1a3a; color: var(--accent); }
-  .nav-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--muted); flex-shrink: 0;
-  }
-  .nav-item.active .nav-dot { background: var(--accent); }
+    /* HEADER */
+    header {
+      padding: 2.5rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .header-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    header h1 span { color: var(--accent); }
+    .header-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      max-width: 340px;
+      line-height: 1.6;
+      margin-top: 0.5rem;
+    }
 
-  .stat-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: .9rem 1rem;
-    margin-bottom: 10px;
-  }
-  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .stat-val { font-family: var(--mono); font-size: 22px; font-weight: 700; }
-  .stat-val.green { color: var(--accent2); }
-  .stat-val.purple { color: var(--accent); }
-  .stat-val.amber { color: var(--accent3); }
+    /* SKILL BADGES */
+    .skill-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+      border: 1px solid;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 0.4s forwards;
+    }
+    .badge:nth-child(1) { border-color: var(--accent); color: var(--accent); animation-delay: 0.1s; }
+    .badge:nth-child(2) { border-color: var(--accent2); color: var(--accent2); animation-delay: 0.2s; }
+    .badge:nth-child(3) { border-color: var(--accent3); color: var(--accent3); animation-delay: 0.3s; }
+    .badge:nth-child(4) { border-color: var(--accent4); color: var(--accent4); animation-delay: 0.4s; }
+    .badge:nth-child(5) { border-color: var(--accent); color: var(--accent); animation-delay: 0.5s; }
+    .badge:nth-child(6) { border-color: var(--accent2); color: var(--accent2); animation-delay: 0.6s; }
+    .badge:nth-child(7) { border-color: var(--accent3); color: var(--accent3); animation-delay: 0.7s; }
+    .badge:nth-child(8) { border-color: var(--accent4); color: var(--accent4); animation-delay: 0.8s; }
 
-  /* ── MAIN ── */
-  main { padding: 2rem; overflow-y: auto; }
-  .section { margin-bottom: 3rem; }
-  .section-header {
-    display: flex; align-items: baseline; gap: 12px;
-    margin-bottom: 1.25rem; padding-bottom: .75rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .section-title { font-size: 16px; font-weight: 600; }
-  .section-tag {
-    font-family: var(--mono);
-    font-size: 11px; color: var(--muted); letter-spacing: .05em;
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-  /* ── CODE BLOCK ── */
-  .code-block {
-    background: #0a0c10;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
-  .code-bar {
-    background: #111318;
-    padding: 8px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-  }
-  .code-bar-title { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .run-btn {
-    background: var(--accent);
-    color: #fff; border: none; cursor: pointer;
-    font-family: var(--mono); font-size: 11px;
-    padding: 4px 12px; border-radius: 6px;
-    transition: opacity .15s;
-  }
-  .run-btn:hover { opacity: .85; }
-  pre {
-    padding: 1rem 1.25rem;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    line-height: 1.8;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  .kw  { color: #c792ea; }
-  .fn  { color: #82aaff; }
-  .str { color: #c3e88d; }
-  .num { color: #f78c6c; }
-  .cmt { color: #546e7a; font-style: italic; }
-  .arr { color: #89ddff; }
-  .op  { color: #89ddff; }
+    /* MAIN LAYOUT */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 0;
+      min-height: calc(100vh - 160px);
+    }
 
-  /* ── CONSOLE OUTPUT ── */
-  .console-out {
-    background: #070810;
-    border: 1px solid #1e2235;
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 1.9;
-    min-height: 60px;
-    max-height: 260px;
-    overflow-y: auto;
-  }
-  .console-out .log   { color: var(--text); }
-  .console-out .info  { color: var(--accent5); }
-  .console-out .ok    { color: var(--accent2); }
-  .console-out .warn  { color: var(--accent3); }
-  .console-out .err   { color: var(--danger); }
-  .console-out .label { color: var(--muted); }
-  .console-prompt::before { content: '▶ '; color: var(--accent); }
-  .console-out .dim { color: #3a3e52; }
+    @media (max-width: 900px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
 
-  /* ── PRODUCT GRID ── */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  .product-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.1rem;
-    transition: border-color .2s, transform .15s;
-    cursor: pointer;
-  }
-  .product-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .prod-icon {
-    font-size: 28px; margin-bottom: 8px;
-  }
-  .prod-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .prod-cat { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-  .prod-price { font-family: var(--mono); font-size: 16px; color: var(--accent2); font-weight: 600; }
-  .prod-stock { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    /* LEFT PANEL */
+    .left-panel {
+      padding: 2rem;
+      border-right: 1px solid var(--border);
+    }
 
-  /* ── FILTER BAR ── */
-  .filter-bar {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.25rem;
-  }
-  .filter-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: var(--mono); font-size: 12px;
-    padding: 6px 14px; border-radius: 20px;
-    cursor: pointer; transition: all .15s;
-  }
-  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .filter-btn.active { background: #1e1a3a; border-color: var(--accent); color: var(--accent); }
-  input[type="text"] {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--sans); font-size: 13px;
-    padding: 6px 14px; border-radius: 20px;
-    outline: none; transition: border-color .15s;
-  }
-  input[type="text"]:focus { border-color: var(--accent); }
-  input[type="text"]::placeholder { color: var(--muted); }
+    /* SECTION TITLES */
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
 
-  /* ── OBJECT TABLE ── */
-  .obj-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: var(--mono);
-    font-size: 12.5px;
-  }
-  .obj-table th {
-    text-align: left; padding: 8px 12px;
-    font-size: 11px; color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    letter-spacing: .07em;
-  }
-  .obj-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid #1a1d28;
-  }
-  .obj-table tr:hover td { background: var(--card); }
-  .key-col { color: var(--accent5); }
-  .val-col { color: var(--accent2); }
-  .type-col { color: var(--muted); font-size: 11px; }
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
 
-  /* ── SCOPE DEMO ── */
-  .scope-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-  }
-  .scope-box {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem;
-  }
-  .scope-box h4 { font-size: 12px; color: var(--muted); margin-bottom: .6rem; font-weight: 400; letter-spacing:.05em; }
-  .scope-row {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--mono); font-size: 12px; padding: 4px 0;
-  }
-  .scope-var { color: var(--accent4); }
-  .scope-eq  { color: var(--muted); }
-  .scope-val { color: var(--accent2); }
-  .scope-note { font-size: 11px; color: var(--muted); margin-top: 8px; }
-  .scope-err  { color: var(--danger); }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .field label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .field input, .field select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.6rem 0.8rem;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+    }
+    .field select option { background: var(--card); }
 
-  /* ── REDUCE VISUAL ── */
-  .reduce-vis {
-    display: flex; align-items: center; gap: 6px;
-    flex-wrap: wrap; margin-bottom: .75rem;
-  }
-  .rv-chip {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 6px; padding: 6px 12px;
-    font-family: var(--mono); font-size: 13px; color: var(--accent3);
-  }
-  .rv-op { color: var(--muted); font-family: var(--mono); font-size: 14px; }
-  .rv-result {
-    background: #1a2e1a; border: 1px solid var(--accent2);
-    border-radius: 6px; padding: 6px 14px;
-    font-family: var(--mono); font-size: 13px; color: var(--accent2); font-weight: 600;
-  }
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
-  /* ── TOOLTIP ── */
-  .tip {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: .6rem 1rem;
-    font-size: 12px; color: var(--muted); margin-top: .75rem;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .tip::before { content: 'ℹ️'; font-size: 13px; }
+    button {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 4px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
 
-  /* ── ARROW FN COMPARE ── */
-  .fn-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+      font-size: 0.65rem;
+      padding: 0.3rem 0.6rem;
+    }
+    .btn-danger:hover { background: var(--accent2); color: #000; }
 
-  @media (max-width: 820px) {
-    .page { grid-template-columns: 1fr; }
-    aside { position: static; height: auto; }
-    .fn-compare, .scope-grid { grid-template-columns: 1fr; }
-    header .badge-row { display: none; }
-  }
-</style>
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .filter-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--accent4);
+      color: var(--accent4);
+      background: rgba(167,139,250,0.08);
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+    }
+    .stat-card:nth-child(1)::before { background: var(--accent); }
+    .stat-card:nth-child(2)::before { background: var(--accent2); }
+    .stat-card:nth-child(3)::before { background: var(--accent3); }
+    .stat-card:nth-child(4)::before { background: var(--accent4); }
+
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-card:nth-child(1) .stat-value { color: var(--accent); }
+    .stat-card:nth-child(2) .stat-value { color: var(--accent2); }
+    .stat-card:nth-child(3) .stat-value { color: var(--accent3); }
+    .stat-card:nth-child(4) .stat-value { color: var(--accent4); }
+
+    /* STUDENT TABLE */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    td {
+      padding: 0.7rem 1rem;
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr {
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    .grade-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+    }
+    .grade-A { background: rgba(0,255,204,0.12); color: var(--accent); }
+    .grade-B { background: rgba(167,139,250,0.12); color: var(--accent4); }
+    .grade-C { background: rgba(255,209,102,0.12); color: var(--accent3); }
+    .grade-F { background: rgba(255,77,109,0.12); color: var(--accent2); }
+
+    .course-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      background: rgba(167,139,250,0.1);
+      color: var(--accent4);
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* RIGHT PANEL — CONSOLE */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--console-bg);
+    }
+
+    .console-header {
+      padding: 1rem 1.2rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .console-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .console-dots { display: flex; gap: 5px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f56; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #27c93f; }
+
+    .console-output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      max-height: calc(100vh - 250px);
+    }
+    .console-output::-webkit-scrollbar { width: 4px; }
+    .console-output::-webkit-scrollbar-track { background: transparent; }
+    .console-output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .log-line { display: block; word-break: break-all; }
+    .log-line.log    { color: var(--console-text); }
+    .log-line.warn   { color: var(--console-warn); }
+    .log-line.error  { color: var(--console-error); }
+    .log-line.info   { color: var(--console-info); }
+    .log-line.section {
+      color: var(--accent4);
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      font-weight: 700;
+    }
+    .log-line.result { color: var(--accent3); }
+
+    .console-controls {
+      padding: 0.8rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .console-controls button {
+      font-size: 0.6rem;
+      padding: 0.35rem 0.65rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+    .console-controls button:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* CODE ANNOTATIONS SIDEBAR STRIP */
+    .annotation-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .annotation {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      border-left: 3px solid var(--accent4);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+    .annotation:nth-child(2) { border-left-color: var(--accent); animation-delay: 0.1s; }
+    .annotation:nth-child(3) { border-left-color: var(--accent2); animation-delay: 0.2s; }
+    .annotation:nth-child(4) { border-left-color: var(--accent3); animation-delay: 0.3s; }
+    .annotation:nth-child(5) { border-left-color: var(--accent4); animation-delay: 0.4s; }
+    .annotation:nth-child(6) { border-left-color: var(--accent); animation-delay: 0.5s; }
+    .annotation:nth-child(7) { border-left-color: var(--accent2); animation-delay: 0.6s; }
+    .annotation:nth-child(8) { border-left-color: var(--accent3); animation-delay: 0.7s; }
+
+    .ann-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent4);
+      margin-bottom: 0.4rem;
+    }
+    .annotation:nth-child(2) .ann-tag { color: var(--accent); }
+    .annotation:nth-child(3) .ann-tag { color: var(--accent2); }
+    .annotation:nth-child(4) .ann-tag { color: var(--accent3); }
+    .annotation:nth-child(5) .ann-tag { color: var(--accent4); }
+    .annotation:nth-child(6) .ann-tag { color: var(--accent); }
+    .annotation:nth-child(7) .ann-tag { color: var(--accent2); }
+    .annotation:nth-child(8) .ann-tag { color: var(--accent3); }
+
+    .ann-code {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .ann-code em {
+      font-style: normal;
+      opacity: 0.5;
+    }
+  </style>
 </head>
 <body>
+<div class="page-wrap">
 
-<header>
-  <div class="header-logo">
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect width="18" height="18" rx="5" fill="#7c6af7"/><path d="M5 9h8M9 5v8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-    ES6 Learning Outcomes
-    <span>// Student Tech Store Case Study</span>
+  <header>
+    <div>
+      <div class="header-label">▸ ES6 Learning Lab — Case Study</div>
+      <h1>Student <span>Registry</span></h1>
+      <p class="header-sub">// A live project demonstrating ES6, Scope, Arrow Functions, Arrays, Objects & more</p>
+    </div>
+  </header>
+
+  <div class="skill-badges">
+    <span class="badge">ES6 Features</span>
+    <span class="badge">Scope</span>
+    <span class="badge">Let &amp; Const</span>
+    <span class="badge">Arrow Functions</span>
+    <span class="badge">Array.map</span>
+    <span class="badge">Array.filter</span>
+    <span class="badge">Array.reduce</span>
+    <span class="badge">Objects</span>
   </div>
-  <div class="badge-row">
-    <span class="badge badge-purple">let &amp; const</span>
-    <span class="badge badge-blue">scope</span>
-    <span class="badge badge-green">arrow fn</span>
-    <span class="badge badge-amber">arrays</span>
-    <span class="badge badge-pink">objects</span>
+
+  <div class="main-layout">
+    <!-- LEFT: APP -->
+    <div class="left-panel">
+
+      <!-- ADD STUDENT FORM -->
+      <div class="section-title">Add Student</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Name</label>
+          <input type="text" id="inp-name" placeholder="e.g. Ada Lovelace" />
+        </div>
+        <div class="field">
+          <label>Score (0–100)</label>
+          <input type="number" id="inp-score" placeholder="e.g. 87" min="0" max="100" />
+        </div>
+        <div class="field">
+          <label>Course</label>
+          <select id="inp-course">
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Web Design">Web Design</option>
+            <option value="DevOps">DevOps</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Year</label>
+          <select id="inp-year">
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-bottom:1.5rem">
+        <button class="btn-primary" onclick="addStudent()">+ Add Student</button>
+        <button class="btn-secondary" onclick="loadDemoData()">Load Demo Data</button>
+        <button class="btn-secondary" onclick="runAllDemos()">▶ Run All Console Demos</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="section-title">Live Statistics  <span style="color:var(--muted);font-size:0.6rem;font-family:'Space Mono',monospace">— powered by .reduce()</span></div>
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-label">Total Students</div>
+          <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Score</div>
+          <div class="stat-value" id="stat-avg">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Passing (&ge;50)</div>
+          <div class="stat-value" id="stat-pass">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Score</div>
+          <div class="stat-value" id="stat-top">—</div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="section-title">Filter by Grade  <span style="color:var(--muted);font-size:0.6rem;font-family:'Space Mono',monospace">— powered by .filter()</span></div>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" data-filter="A" onclick="setFilter('A', this)">Grade A (90+)</button>
+        <button class="filter-btn" data-filter="B" onclick="setFilter('B', this)">Grade B (75–89)</button>
+        <button class="filter-btn" data-filter="C" onclick="setFilter('C', this)">Grade C (50–74)</button>
+        <button class="filter-btn" data-filter="F" onclick="setFilter('F', this)">Grade F (&lt;50)</button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="section-title">Student Table  <span style="color:var(--muted);font-size:0.6rem;font-family:'Space Mono',monospace">— powered by .map()</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Course</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Year</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="student-tbody">
+            <tr><td colspan="7" class="empty-state">No students yet — add one or load demo data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: CONSOLE -->
+    <div class="right-panel">
+      <div class="console-header">
+        <span class="console-title">// Console Output</span>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="console-dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+        </div>
+      </div>
+      <div class="console-output" id="console-out">
+        <span class="log-line info">// Console ready. Add students or click "Run All Console Demos"</span>
+      </div>
+      <div class="console-controls">
+        <button onclick="demoScope()">Scope Demo</button>
+        <button onclick="demoLetConst()">Let/Const</button>
+        <button onclick="demoArrow()">Arrow Fns</button>
+        <button onclick="demoArrayMethods()">Array Methods</button>
+        <button onclick="demoObjects()">Objects</button>
+        <button onclick="demoES6()">ES6 Features</button>
+        <button onclick="clearConsole()" style="margin-left:auto;border-color:var(--accent2);color:var(--accent2)">Clear</button>
+      </div>
+    </div>
   </div>
-</header>
 
-<div class="page">
-
-  <!-- SIDEBAR -->
-  <aside>
-    <div class="aside-section">
-      <div class="aside-title">Topics</div>
-      <div class="nav-item active" onclick="scrollTo('s1')"><span class="nav-dot"></span>let &amp; const</div>
-      <div class="nav-item" onclick="scrollTo('s2')"><span class="nav-dot"></span>Scope</div>
-      <div class="nav-item" onclick="scrollTo('s3')"><span class="nav-dot"></span>Arrow functions</div>
-      <div class="nav-item" onclick="scrollTo('s4')"><span class="nav-dot"></span>Array — map()</div>
-      <div class="nav-item" onclick="scrollTo('s5')"><span class="nav-dot"></span>Array — filter()</div>
-      <div class="nav-item" onclick="scrollTo('s6')"><span class="nav-dot"></span>Array — reduce()</div>
-      <div class="nav-item" onclick="scrollTo('s7')"><span class="nav-dot"></span>Array — forEach()</div>
-      <div class="nav-item" onclick="scrollTo('s8')"><span class="nav-dot"></span>Objects</div>
-      <div class="nav-item" onclick="scrollTo('s9')"><span class="nav-dot"></span>Case Study</div>
-    </div>
-    <div class="aside-section">
-      <div class="aside-title">Store Stats</div>
-      <div class="stat-box">
-        <div class="stat-label">Total Products</div>
-        <div class="stat-val purple" id="stat-total">—</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Total Value</div>
-        <div class="stat-val green" id="stat-value">—</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Avg Price</div>
-        <div class="stat-val amber" id="stat-avg">—</div>
+  <!-- ANNOTATION STRIP -->
+  <div class="annotation-strip">
+    <div class="annotation">
+      <div class="ann-tag">Scope</div>
+      <div class="ann-code">
+        <em>// var = function scope</em><br>
+        <em>// let/const = block scope</em><br>
+        { let x = 10; }<br>
+        <em>// x not accessible here</em>
       </div>
     </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main>
-
-    <!-- ── SECTION 1: LET & CONST ── -->
-    <div class="section" id="s1">
-      <div class="section-header">
-        <span class="section-title">let &amp; const</span>
-        <span class="section-tag">// ES6 variable declarations</span>
-        <span class="badge badge-purple">ES6</span>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">let-const.js</span>
-          <button class="run-btn" onclick="runLetConst()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// const — value cannot be reassigned</span>
-<span class="kw">const</span> <span class="fn">STORE_NAME</span> <span class="op">=</span> <span class="str">"Student Tech Store"</span><span class="op">;</span>
-<span class="kw">const</span> <span class="fn">TAX_RATE</span>   <span class="op">=</span> <span class="num">0.075</span><span class="op">;</span>
-
-<span class="cmt">// let — value can be reassigned</span>
-<span class="kw">let</span> <span class="fn">cartTotal</span>  <span class="op">=</span> <span class="num">0</span><span class="op">;</span>
-<span class="kw">let</span> <span class="fn">activeUser</span> <span class="op">=</span> <span class="str">"Student"</span><span class="op">;</span>
-
-<span class="cmt">// reassign let — OK</span>
-<span class="fn">cartTotal</span>  <span class="op">=</span> <span class="num">250</span><span class="op">;</span>
-<span class="fn">activeUser</span> <span class="op">=</span> <span class="str">"Ada"</span><span class="op">;</span>
-
-<span class="cmt">// reassign const — will throw TypeError</span>
-<span class="cmt">// STORE_NAME = "Other";  ← ❌ Error!</span>
-
-console<span class="op">.</span><span class="fn">log</span>(STORE_NAME, TAX_RATE, cartTotal, activeUser)<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-letconst">
-        <span class="dim">// Click ▶ Run to execute</span>
-      </div>
-      <div class="tip">const is for values that should never change (constants). let is for values that update over time (counters, state). Never use var in modern JS.</div>
-    </div>
-
-    <!-- ── SECTION 2: SCOPE ── -->
-    <div class="section" id="s2">
-      <div class="section-header">
-        <span class="section-title">Scope</span>
-        <span class="section-tag">// block vs function scope</span>
-        <span class="badge badge-blue">Scope</span>
-      </div>
-
-      <div class="scope-grid">
-        <div class="scope-box">
-          <h4>BLOCK SCOPE  (let / const)</h4>
-          <div class="code-block" style="margin:0">
-            <pre style="font-size:12px"><span class="kw">let</span> <span class="fn">price</span> <span class="op">=</span> <span class="num">100</span><span class="op">;</span>    <span class="cmt">// outer</span>
-
-<span class="op">{</span>
-  <span class="kw">let</span> <span class="fn">price</span> <span class="op">=</span> <span class="num">80</span><span class="op">;</span>  <span class="cmt">// inner</span>
-  console<span class="op">.</span><span class="fn">log</span>(price)<span class="op">;</span>  <span class="cmt">// 80</span>
-<span class="op">}</span>
-
-console<span class="op">.</span><span class="fn">log</span>(price)<span class="op">;</span>    <span class="cmt">// 100</span></pre>
-          </div>
-        </div>
-        <div class="scope-box">
-          <h4>FUNCTION SCOPE  (var — avoid)</h4>
-          <div class="code-block" style="margin:0">
-            <pre style="font-size:12px"><span class="kw">var</span> <span class="fn">discount</span> <span class="op">=</span> <span class="num">10</span><span class="op">;</span>   <span class="cmt">// outer</span>
-
-<span class="op">{</span>
-  <span class="kw">var</span> <span class="fn">discount</span> <span class="op">=</span> <span class="num">25</span><span class="op">;</span> <span class="cmt">// overwrites!</span>
-<span class="op">}</span>
-
-console<span class="op">.</span><span class="fn">log</span>(discount)<span class="op">;</span> <span class="cmt">// 25 ⚠️</span></pre>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:1rem">
-        <div class="code-bar" style="background:#111318;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;padding:8px 14px;display:flex;justify-content:space-between;align-items:center">
-          <span class="code-bar-title">scope-demo.js</span>
-          <button class="run-btn" onclick="runScope()">▶ Run</button>
-        </div>
-        <div class="console-out" id="out-scope" style="border-radius:0 0 10px 10px;border-top:none">
-          <span class="dim">// Click ▶ Run to execute</span>
-        </div>
-      </div>
-      <div class="tip">let and const are block-scoped — they stay inside {}. var leaks out of blocks (only respects functions), which causes bugs. Always prefer let and const.</div>
-    </div>
-
-    <!-- ── SECTION 3: ARROW FUNCTIONS ── -->
-    <div class="section" id="s3">
-      <div class="section-header">
-        <span class="section-title">Arrow Functions</span>
-        <span class="section-tag">// concise function syntax</span>
-        <span class="badge badge-green">ES6</span>
-      </div>
-
-      <div class="fn-compare">
-        <div class="code-block">
-          <div class="code-bar">
-            <span class="code-bar-title">Traditional</span>
-          </div>
-          <pre><span class="kw">function</span> <span class="fn">calcTax</span>(price) <span class="op">{</span>
-  <span class="kw">return</span> price <span class="op">*</span> <span class="num">0.075</span><span class="op">;</span>
-<span class="op">}</span>
-
-<span class="kw">const</span> <span class="fn">getLabel</span> <span class="op">=</span> <span class="kw">function</span>(p) <span class="op">{</span>
-  <span class="kw">return</span> <span class="str">`₦${p}`</span><span class="op">;</span>
-<span class="op">};</span></pre>
-        </div>
-        <div class="code-block">
-          <div class="code-bar">
-            <span class="code-bar-title">Arrow Function  ✨</span>
-          </div>
-          <pre><span class="kw">const</span> <span class="fn">calcTax</span> <span class="op">=</span> price <span class="op">=></span>
-  price <span class="op">*</span> <span class="num">0.075</span><span class="op">;</span>
-
-<span class="kw">const</span> <span class="fn">getLabel</span> <span class="op">=</span> p <span class="op">=></span>
-  <span class="str">`₦${p}`</span><span class="op">;</span>
-
-<span class="cmt">// multi-param needs parens</span>
-<span class="kw">const</span> <span class="fn">total</span> <span class="op">=</span> (p, qty) <span class="op">=></span> p <span class="op">*</span> qty<span class="op">;</span></pre>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">arrow-functions.js</span>
-          <button class="run-btn" onclick="runArrow()">▶ Run</button>
-        </div>
-        <pre><span class="kw">const</span> <span class="fn">calcTax</span>   <span class="op">=</span> price <span class="op">=></span> price <span class="op">*</span> <span class="num">0.075</span><span class="op">;</span>
-<span class="kw">const</span> <span class="fn">applyDisc</span> <span class="op">=</span> (price, pct) <span class="op">=></span> price <span class="op">-</span> (price <span class="op">*</span> pct <span class="op">/</span> <span class="num">100</span>)<span class="op">;</span>
-<span class="kw">const</span> <span class="fn">formatNGN</span> <span class="op">=</span> n <span class="op">=></span> <span class="str">`₦${n.toLocaleString()}`</span><span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Tax on ₦5000:"</span><span class="op">,</span>  <span class="fn">formatNGN</span>(<span class="fn">calcTax</span>(<span class="num">5000</span>)))<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"20% off ₦3000:"</span><span class="op">,</span> <span class="fn">formatNGN</span>(<span class="fn">applyDisc</span>(<span class="num">3000</span>, <span class="num">20</span>)))<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-arrow">
-        <span class="dim">// Click ▶ Run to execute</span>
+    <div class="annotation">
+      <div class="ann-tag">Let &amp; Const</div>
+      <div class="ann-code">
+        let score = 0;<br>
+        score = 42; <em>// ✓ ok</em><br>
+        const NAME = "Ada";<br>
+        <em>// NAME = "X" → Error</em>
       </div>
     </div>
-
-    <!-- ── SECTION 4: MAP ── -->
-    <div class="section" id="s4">
-      <div class="section-header">
-        <span class="section-title">Array — map()</span>
-        <span class="section-tag">// transform every element</span>
-        <span class="badge badge-amber">Array</span>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">map.js</span>
-          <button class="run-btn" onclick="runMap()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// Add 10% price increase to all products</span>
-<span class="kw">const</span> <span class="fn">updatedPrices</span> <span class="op">=</span> products.<span class="fn">map</span>(p <span class="op">=></span> (<span class="op">{</span>
-  <span class="op">...</span>p<span class="op">,</span>
-  price<span class="op">:</span> <span class="op">+(</span>p.price <span class="op">*</span> <span class="num">1.10</span>).<span class="fn">toFixed</span>(<span class="num">2</span>)
-<span class="op">}));</span>
-
-<span class="cmt">// Extract only product names</span>
-<span class="kw">const</span> <span class="fn">names</span> <span class="op">=</span> products.<span class="fn">map</span>(p <span class="op">=></span> p.name)<span class="op">;</span>
-
-<span class="cmt">// Create price tags</span>
-<span class="kw">const</span> <span class="fn">tags</span> <span class="op">=</span> products.<span class="fn">map</span>(p <span class="op">=></span> <span class="str">`${p.name}: ₦${p.price}`</span>)<span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Names:"</span><span class="op">,</span> names)<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Tags:"</span><span class="op">,</span> tags)<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-map">
-        <span class="dim">// Click ▶ Run to execute</span>
-      </div>
-      <div class="tip">map() always returns a NEW array of the same length. It never mutates the original array. Perfect for transforming data.</div>
-    </div>
-
-    <!-- ── SECTION 5: FILTER ── -->
-    <div class="section" id="s5">
-      <div class="section-header">
-        <span class="section-title">Array — filter()</span>
-        <span class="section-tag">// select matching elements</span>
-        <span class="badge badge-amber">Array</span>
-      </div>
-
-      <div class="filter-bar" id="filter-bar">
-        <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
-        <button class="filter-btn" onclick="filterProducts('laptop', this)">Laptops</button>
-        <button class="filter-btn" onclick="filterProducts('phone', this)">Phones</button>
-        <button class="filter-btn" onclick="filterProducts('accessory', this)">Accessories</button>
-        <input type="text" id="search-input" placeholder="Search products…" oninput="searchProducts(this.value)" />
-      </div>
-
-      <div class="product-grid" id="product-grid"><!-- filled by JS --></div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">filter.js</span>
-          <button class="run-btn" onclick="runFilter()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// Only laptops</span>
-<span class="kw">const</span> <span class="fn">laptops</span>   <span class="op">=</span> products.<span class="fn">filter</span>(p <span class="op">=></span> p.category <span class="op">===</span> <span class="str">"laptop"</span>)<span class="op">;</span>
-<span class="cmt">// Price under ₦80,000</span>
-<span class="kw">const</span> <span class="fn">budget</span>    <span class="op">=</span> products.<span class="fn">filter</span>(p <span class="op">=></span> p.price <span class="op">&lt;</span> <span class="num">80000</span>)<span class="op">;</span>
-<span class="cmt">// In stock only</span>
-<span class="kw">const</span> <span class="fn">inStock</span>   <span class="op">=</span> products.<span class="fn">filter</span>(p <span class="op">=></span> p.stock <span class="op">&gt;</span> <span class="num">0</span>)<span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Laptops:"</span><span class="op">,</span> laptops.<span class="fn">map</span>(p <span class="op">=></span> p.name))<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Under ₦80k:"</span><span class="op">,</span> budget.<span class="fn">map</span>(p <span class="op">=></span> p.name))<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-filter">
-        <span class="dim">// Click ▶ Run to execute</span>
+    <div class="annotation">
+      <div class="ann-tag">Arrow Functions</div>
+      <div class="ann-code">
+        <em>// Traditional</em><br>
+        function add(a,b){ return a+b }<br>
+        <em>// Arrow</em><br>
+        const add = (a,b) =&gt; a+b;
       </div>
     </div>
-
-    <!-- ── SECTION 6: REDUCE ── -->
-    <div class="section" id="s6">
-      <div class="section-header">
-        <span class="section-title">Array — reduce()</span>
-        <span class="section-tag">// accumulate to a single value</span>
-        <span class="badge badge-amber">Array</span>
-      </div>
-
-      <div style="margin-bottom:1rem">
-        <div class="tip" style="margin-bottom:.75rem">reduce() collapses an array into a single value by running an accumulator function on each element.</div>
-        <div id="reduce-vis" class="reduce-vis"><!-- filled by JS --></div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">reduce.js</span>
-          <button class="run-btn" onclick="runReduce()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// Sum all prices</span>
-<span class="kw">const</span> <span class="fn">totalValue</span> <span class="op">=</span> products.<span class="fn">reduce</span>(
-  (acc, p) <span class="op">=></span> acc <span class="op">+</span> p.price, <span class="num">0</span>
-)<span class="op">;</span>
-
-<span class="cmt">// Total stock count</span>
-<span class="kw">const</span> <span class="fn">totalStock</span> <span class="op">=</span> products.<span class="fn">reduce</span>(
-  (acc, p) <span class="op">=></span> acc <span class="op">+</span> p.stock, <span class="num">0</span>
-)<span class="op">;</span>
-
-<span class="cmt">// Group by category</span>
-<span class="kw">const</span> <span class="fn">byCategory</span> <span class="op">=</span> products.<span class="fn">reduce</span>((acc, p) <span class="op">=></span> <span class="op">{</span>
-  acc[p.category] <span class="op">=</span> (acc[p.category] <span class="op">||</span> <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span><span class="op">;</span>
-  <span class="kw">return</span> acc<span class="op">;</span>
-<span class="op">},</span> <span class="op">{}</span>)<span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Total value:"</span><span class="op">,</span> <span class="str">`₦${totalValue.toLocaleString()}`</span>)<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Total stock:"</span><span class="op">,</span> totalStock)<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"By category:"</span><span class="op">,</span> byCategory)<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-reduce">
-        <span class="dim">// Click ▶ Run to execute</span>
+    <div class="annotation">
+      <div class="ann-tag">Array.map</div>
+      <div class="ann-code">
+        students.map(s =&gt;<br>
+        &nbsp;&nbsp;s.score * 1.1<br>
+        );<br>
+        <em>// returns new array</em>
       </div>
     </div>
-
-    <!-- ── SECTION 7: FOREACH ── -->
-    <div class="section" id="s7">
-      <div class="section-header">
-        <span class="section-title">Array — forEach()</span>
-        <span class="section-tag">// side-effects on each element</span>
-        <span class="badge badge-amber">Array</span>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">forEach.js</span>
-          <button class="run-btn" onclick="runForEach()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// Log each item in the cart</span>
-<span class="kw">const</span> <span class="fn">cart</span> <span class="op">=</span> [
-  <span class="op">{</span> name<span class="op">:</span> <span class="str">"MacBook Air"</span><span class="op">,</span> qty<span class="op">:</span> <span class="num">1</span><span class="op">,</span> price<span class="op">:</span> <span class="num">450000</span> <span class="op">}</span><span class="op">,</span>
-  <span class="op">{</span> name<span class="op">:</span> <span class="str">"USB Hub"</span><span class="op">,</span>     qty<span class="op">:</span> <span class="num">2</span><span class="op">,</span> price<span class="op">:</span> <span class="num">8000</span>   <span class="op">}</span><span class="op">,</span>
-  <span class="op">{</span> name<span class="op">:</span> <span class="str">"Mouse"</span><span class="op">,</span>       qty<span class="op">:</span> <span class="num">1</span><span class="op">,</span> price<span class="op">:</span> <span class="num">12000</span>  <span class="op">}</span>
-]<span class="op">;</span>
-
-<span class="kw">let</span> <span class="fn">receiptTotal</span> <span class="op">=</span> <span class="num">0</span><span class="op">;</span>
-
-cart.<span class="fn">forEach</span>((item, index) <span class="op">=></span> <span class="op">{</span>
-  <span class="kw">const</span> <span class="fn">lineTotal</span> <span class="op">=</span> item.price <span class="op">*</span> item.qty<span class="op">;</span>
-  receiptTotal <span class="op">+=</span> lineTotal<span class="op">;</span>
-  console<span class="op">.</span><span class="fn">log</span>(<span class="str">`${index+1}. ${item.name} x${item.qty} = ₦${lineTotal.toLocaleString()}`</span>)<span class="op">;</span>
-<span class="op">}</span>)<span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"TOTAL: ₦"</span> <span class="op">+</span> receiptTotal.<span class="fn">toLocaleString</span>())<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-foreach">
-        <span class="dim">// Click ▶ Run to execute</span>
-      </div>
-      <div class="tip">forEach() is for side effects (logging, updating DOM, saving data). It always returns undefined — never use it when you need a new array. Use map() or filter() for that.</div>
-    </div>
-
-    <!-- ── SECTION 8: OBJECTS ── -->
-    <div class="section" id="s8">
-      <div class="section-header">
-        <span class="section-title">Objects</span>
-        <span class="section-tag">// properties, methods, destructuring</span>
-        <span class="badge badge-pink">Objects</span>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">objects.js</span>
-          <button class="run-btn" onclick="runObjects()">▶ Run</button>
-        </div>
-        <pre><span class="cmt">// Object literal</span>
-<span class="kw">const</span> <span class="fn">product</span> <span class="op">=</span> <span class="op">{</span>
-  id<span class="op">:</span> <span class="num">1</span><span class="op">,</span>
-  name<span class="op">:</span> <span class="str">"MacBook Air M2"</span><span class="op">,</span>
-  price<span class="op">:</span> <span class="num">450000</span><span class="op">,</span>
-  category<span class="op">:</span> <span class="str">"laptop"</span><span class="op">,</span>
-  inStock<span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
-  <span class="cmt">// Method shorthand (ES6)</span>
-  <span class="fn">priceWithTax</span>() <span class="op">{</span> <span class="kw">return</span> <span class="kw">this</span>.price <span class="op">*</span> <span class="num">1.075</span><span class="op">;</span> <span class="op">}</span><span class="op">,</span>
-  <span class="fn">summary</span>()      <span class="op">{</span> <span class="kw">return</span> <span class="str">`${this.name} — ₦${this.price.toLocaleString()}`</span><span class="op">;</span> <span class="op">}</span>
-<span class="op">};</span>
-
-<span class="cmt">// Destructuring</span>
-<span class="kw">const</span> <span class="op">{</span> name<span class="op">,</span> price<span class="op">,</span> category <span class="op">}</span> <span class="op">=</span> product<span class="op">;</span>
-
-<span class="cmt">// Spread operator — clone &amp; update</span>
-<span class="kw">const</span> <span class="fn">discounted</span> <span class="op">=</span> <span class="op">{</span> <span class="op">...</span>product<span class="op">,</span> price<span class="op">:</span> <span class="num">400000</span> <span class="op">}</span><span class="op">;</span>
-
-console<span class="op">.</span><span class="fn">log</span>(product.<span class="fn">summary</span>())<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Tax price:"</span><span class="op">,</span> product.<span class="fn">priceWithTax</span>())<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Destructured:"</span><span class="op">,</span> name<span class="op">,</span> price<span class="op">,</span> category)<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Discounted:"</span><span class="op">,</span> discounted.price)<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-objects">
-        <span class="dim">// Click ▶ Run to execute</span>
-      </div>
-
-      <div style="margin-top:1rem">
-        <div class="code-bar" style="background:#111318;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;padding:8px 14px"><span class="code-bar-title">Object Keys &amp; Values Inspector</span></div>
-        <div style="background:#0a0c10;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:auto">
-          <table class="obj-table">
-            <thead><tr><th>Key</th><th>Value</th><th>Type</th></tr></thead>
-            <tbody id="obj-table-body"><!-- filled by JS --></tbody>
-          </table>
-        </div>
+    <div class="annotation">
+      <div class="ann-tag">Array.filter</div>
+      <div class="ann-code">
+        students.filter(s =&gt;<br>
+        &nbsp;&nbsp;s.score &gt;= 50<br>
+        );<br>
+        <em>// returns subset</em>
       </div>
     </div>
-
-    <!-- ── SECTION 9: CASE STUDY ── -->
-    <div class="section" id="s9">
-      <div class="section-header">
-        <span class="section-title">Case Study — Student Tech Store</span>
-        <span class="section-tag">// all concepts combined</span>
-        <span class="badge badge-green">Project</span>
-      </div>
-
-      <div class="code-block">
-        <div class="code-bar">
-          <span class="code-bar-title">store.js — Full Case Study</span>
-          <button class="run-btn" onclick="runCaseStudy()">▶ Run All</button>
-        </div>
-        <pre><span class="cmt">// ── DATA (const + objects) ──────────────────────────────</span>
-<span class="kw">const</span> <span class="fn">TAX</span> <span class="op">=</span> <span class="num">0.075</span><span class="op">;</span>
-
-<span class="cmt">// ── ARROW FUNCTIONS ────────────────────────────────────</span>
-<span class="kw">const</span> <span class="fn">withTax</span>    <span class="op">=</span> price <span class="op">=></span> <span class="op">+(</span>price <span class="op">*</span> (<span class="num">1</span> <span class="op">+</span> TAX)).<span class="fn">toFixed</span>(<span class="num">2</span>)<span class="op">;</span>
-<span class="kw">const</span> <span class="fn">formatPrice</span> <span class="op">=</span> n <span class="op">=></span> <span class="str">`₦${n.toLocaleString()}`</span><span class="op">;</span>
-<span class="kw">const</span> <span class="fn">isAffordable</span><span class="op">=</span> (p, budget) <span class="op">=></span> p.price <span class="op">&lt;=</span> budget<span class="op">;</span>
-
-<span class="cmt">// ── MAP — build receipt lines ──────────────────────────</span>
-<span class="kw">const</span> <span class="fn">receiptLines</span> <span class="op">=</span> products.<span class="fn">map</span>(p <span class="op">=></span> (
-  <span class="str">`${p.name.padEnd(22)} ${formatPrice(p.price)}`</span>
-))<span class="op">;</span>
-
-<span class="cmt">// ── FILTER — budget under ₦100,000 ────────────────────</span>
-<span class="kw">const</span> <span class="fn">affordable</span> <span class="op">=</span> products
-  .<span class="fn">filter</span>(p <span class="op">=></span> <span class="fn">isAffordable</span>(p, <span class="num">100000</span>))
-  .<span class="fn">map</span>(p <span class="op">=></span> p.name)<span class="op">;</span>
-
-<span class="cmt">// ── REDUCE — totals ────────────────────────────────────</span>
-<span class="kw">const</span> <span class="fn">storeValue</span>   <span class="op">=</span> products.<span class="fn">reduce</span>((s, p) <span class="op">=></span> s <span class="op">+</span> p.price<span class="op">,</span> <span class="num">0</span>)<span class="op">;</span>
-<span class="kw">const</span> <span class="fn">avgPrice</span>     <span class="op">=</span> storeValue <span class="op">/</span> products.length<span class="op">;</span>
-
-<span class="cmt">// ── FOREACH — print receipt ────────────────────────────</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"=== STUDENT TECH STORE RECEIPT ==="</span>)<span class="op">;</span>
-receiptLines.<span class="fn">forEach</span>(line <span class="op">=></span> console<span class="op">.</span><span class="fn">log</span>(line))<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"──────────────────────────────────"</span>)<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Catalogue value: "</span><span class="op">,</span> <span class="fn">formatPrice</span>(storeValue))<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Average price:   "</span><span class="op">,</span> <span class="fn">formatPrice</span>(Math.<span class="fn">round</span>(avgPrice)))<span class="op">;</span>
-console<span class="op">.</span><span class="fn">log</span>(<span class="str">"Under ₦100k:     "</span><span class="op">,</span> affordable.<span class="fn">join</span>(<span class="str">", "</span>))<span class="op">;</span></pre>
-      </div>
-      <div class="console-out" id="out-casestudy">
-        <span class="dim">// Click ▶ Run All to see the full case study output</span>
+    <div class="annotation">
+      <div class="ann-tag">Array.reduce</div>
+      <div class="ann-code">
+        students.reduce(<br>
+        &nbsp;&nbsp;(acc, s) =&gt; acc + s.score, 0<br>
+        );<br>
+        <em>// accumulates total</em>
       </div>
     </div>
+    <div class="annotation">
+      <div class="ann-tag">Array.forEach</div>
+      <div class="ann-code">
+        students.forEach(s =&gt; {<br>
+        &nbsp;&nbsp;console.log(s.name);<br>
+        });<br>
+        <em>// side effects, no return</em>
+      </div>
+    </div>
+    <div class="annotation">
+      <div class="ann-tag">Objects &amp; Destructuring</div>
+      <div class="ann-code">
+        const { name, score }<br>
+        &nbsp;&nbsp;= student;<br>
+        <em>// template literals:</em><br>
+        `${name}: ${score}`
+      </div>
+    </div>
+  </div>
 
-  </main>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════ */
-const products = [
-  { id:1, name:"MacBook Air M2",    price:450000, category:"laptop",    stock:5,  icon:"💻" },
-  { id:2, name:"HP Pavilion 15",    price:280000, category:"laptop",    stock:8,  icon:"💻" },
-  { id:3, name:"Lenovo ThinkPad",   price:320000, category:"laptop",    stock:3,  icon:"💻" },
-  { id:4, name:"iPhone 15",         price:620000, category:"phone",     stock:10, icon:"📱" },
-  { id:5, name:"Samsung Galaxy A55",price:185000, category:"phone",     stock:12, icon:"📱" },
-  { id:6, name:"Tecno Camon 30",    price:95000,  category:"phone",     stock:20, icon:"📱" },
-  { id:7, name:"USB-C Hub 7-in-1",  price:18500,  category:"accessory", stock:30, icon:"🔌" },
-  { id:8, name:"Wireless Mouse",    price:12000,  category:"accessory", stock:25, icon:"🖱️"  },
-  { id:9, name:"Laptop Sleeve 15\"",price:8500,   category:"accessory", stock:40, icon:"🎒" },
-];
+  // ============================================================
+  //  ES6 LEARNING LAB — CASE STUDY: STUDENT REGISTRY
+  //  Every concept is labelled with a comment showing which
+  //  ES6 / JavaScript skill is being demonstrated.
+  // ============================================================
 
-/* ═══════════════════════════════════════════
-   CONSOLE HELPER
-═══════════════════════════════════════════ */
-function writeConsole(id, lines) {
-  const el = document.getElementById(id);
-  el.innerHTML = lines.map(l => `<div class="${l.cls}">${l.text}</div>`).join('');
-}
+  // ── CONST & LET (not var) ──────────────────────────────────
+  const MAX_SCORE = 100;          // const: never reassigned
+  let students = [];              // let: will be reassigned
+  let currentFilter = 'all';      // let: mutable state
 
-/* ═══════════════════════════════════════════
-   SIDEBAR STATS (reduce)
-═══════════════════════════════════════════ */
-function updateStats() {
-  const total = products.length;
-  const value = products.reduce((s,p) => s + p.price, 0);
-  const avg   = Math.round(value / total);
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-value').textContent = '₦' + value.toLocaleString();
-  document.getElementById('stat-avg').textContent   = '₦' + avg.toLocaleString();
-}
-
-/* ═══════════════════════════════════════════
-   PRODUCT GRID (map + render)
-═══════════════════════════════════════════ */
-function renderGrid(list) {
-  const grid = document.getElementById('product-grid');
-  grid.innerHTML = list.map(p => `
-    <div class="product-card">
-      <div class="prod-icon">${p.icon}</div>
-      <div class="prod-name">${p.name}</div>
-      <div class="prod-cat">${p.category}</div>
-      <div class="prod-price">₦${p.price.toLocaleString()}</div>
-      <div class="prod-stock">Stock: ${p.stock} units</div>
-    </div>
-  `).join('');
-}
-
-/* ═══════════════════════════════════════════
-   FILTER
-═══════════════════════════════════════════ */
-let currentCat = 'all';
-
-function filterProducts(cat, btn) {
-  currentCat = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('search-input').value = '';
-  const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
-  renderGrid(filtered);
-}
-
-function searchProducts(query) {
-  const q = query.toLowerCase();
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(q) || p.category.includes(q)
-  );
-  renderGrid(filtered);
-}
-
-/* ═══════════════════════════════════════════
-   REDUCE VISUALISATION
-═══════════════════════════════════════════ */
-function buildReduceVis() {
-  const prices = products.slice(0,5).map(p => p.price);
-  const sum    = prices.reduce((a,b) => a+b, 0);
-  const vis = document.getElementById('reduce-vis');
-  vis.innerHTML = prices.map((p,i) =>
-    `<span class="rv-chip">₦${(p/1000).toFixed(0)}k</span>${i<prices.length-1?'<span class="rv-op">+</span>':''}`
-  ).join('') + `<span class="rv-op">+ … =</span><span class="rv-result">₦${sum.toLocaleString()}</span>`;
-}
-
-/* ═══════════════════════════════════════════
-   OBJECT TABLE
-═══════════════════════════════════════════ */
-function buildObjectTable() {
-  const p = products[0];
-  const tbody = document.getElementById('obj-table-body');
-  tbody.innerHTML = Object.entries(p).map(([k,v]) =>
-    `<tr>
-      <td class="key-col">${k}</td>
-      <td class="val-col">${typeof v === 'string' ? '"'+v+'"' : v}</td>
-      <td class="type-col">${typeof v}</td>
-    </tr>`
-  ).join('');
-}
-
-/* ═══════════════════════════════════════════
-   RUN HANDLERS
-═══════════════════════════════════════════ */
-function runLetConst() {
-  const STORE_NAME = "Student Tech Store";
-  const TAX_RATE   = 0.075;
-  let cartTotal    = 0;
-  let activeUser   = "Student";
-  cartTotal  = 250;
-  activeUser = "Ada";
-  writeConsole('out-letconst', [
-    { cls:'label', text:'// const values (immutable)' },
-    { cls:'ok',    text:`STORE_NAME  → "${STORE_NAME}"` },
-    { cls:'ok',    text:`TAX_RATE    → ${TAX_RATE}` },
-    { cls:'label', text:'// let values (mutable)' },
-    { cls:'info',  text:`cartTotal   → ${cartTotal}  (was 0, reassigned to 250)` },
-    { cls:'info',  text:`activeUser  → "${activeUser}"  (was "Student")` },
-    { cls:'warn',  text:'STORE_NAME = "Other"  → ❌ TypeError: Assignment to constant variable.' },
-  ]);
-}
-
-function runScope() {
-  let price = 100;
-  { let price = 80; /* inner */ }
-  var discount = 10;
-  { var discount = 25; }
-  writeConsole('out-scope', [
-    { cls:'label', text:'// let — block scope' },
-    { cls:'ok',    text:'inner let price  → 80   (only inside {})' },
-    { cls:'ok',    text:`outer let price  → ${price}  (unchanged — block scoped)` },
-    { cls:'label', text:'// var — function scope (leaks!)' },
-    { cls:'warn',  text:`var discount      → ${discount}  (overwritten! var ignores block {})` },
-    { cls:'err',   text:'⚠  Avoid var — use let/const to prevent scope bugs.' },
-  ]);
-}
-
-function runArrow() {
-  const calcTax    = price => price * 0.075;
-  const applyDisc  = (price, pct) => price - (price * pct / 100);
-  const formatNGN  = n => `₦${n.toLocaleString()}`;
-  writeConsole('out-arrow', [
-    { cls:'label', text:'// single-param arrow: price => price * 0.075' },
-    { cls:'ok',    text:`calcTax(5000)       → ${formatNGN(calcTax(5000))}` },
-    { cls:'label', text:'// multi-param: (price, pct) => ...' },
-    { cls:'info',  text:`applyDisc(3000, 20) → ${formatNGN(applyDisc(3000, 20))}` },
-    { cls:'ok',    text:`applyDisc(5000, 10) → ${formatNGN(applyDisc(5000, 10))}` },
-    { cls:'label', text:'// template literal in arrow' },
-    { cls:'info',  text:`formatNGN(12345)    → ${formatNGN(12345)}` },
-  ]);
-}
-
-function runMap() {
-  const names        = products.map(p => p.name);
-  const tags         = products.map(p => `${p.name}: ₦${p.price.toLocaleString()}`);
-  const updatedPrices= products.map(p => ({...p, price: +(p.price*1.10).toFixed(2)}));
-  writeConsole('out-map', [
-    { cls:'label', text:'// .map(p => p.name)' },
-    { cls:'ok',    text:`Names: [${names.join(', ')}]` },
-    { cls:'label', text:'// .map(p => template) — price tags' },
-    ...tags.map(t => ({ cls:'info', text: t })),
-    { cls:'label', text:'// .map spread + 10% increase (first 3)' },
-    ...updatedPrices.slice(0,3).map(p => ({ cls:'warn', text:`${p.name} → ₦${p.price.toLocaleString()}` })),
-  ]);
-}
-
-function runFilter() {
-  const laptops  = products.filter(p => p.category === 'laptop');
-  const budget   = products.filter(p => p.price < 80000);
-  const inStock  = products.filter(p => p.stock > 0);
-  writeConsole('out-filter', [
-    { cls:'label', text:'// filter(p => p.category === "laptop")' },
-    { cls:'ok',    text:`Laptops (${laptops.length}): ${laptops.map(p=>p.name).join(', ')}` },
-    { cls:'label', text:'// filter(p => p.price < 80000)' },
-    { cls:'info',  text:`Under ₦80k (${budget.length}): ${budget.map(p=>p.name).join(', ')}` },
-    { cls:'label', text:'// filter(p => p.stock > 0)' },
-    { cls:'ok',    text:`In stock: ${inStock.length} of ${products.length} products` },
-  ]);
-}
-
-function runReduce() {
-  const totalValue = products.reduce((acc, p) => acc + p.price, 0);
-  const totalStock = products.reduce((acc, p) => acc + p.stock, 0);
-  const byCategory = products.reduce((acc, p) => {
-    acc[p.category] = (acc[p.category] || 0) + 1; return acc;
-  }, {});
-  writeConsole('out-reduce', [
-    { cls:'label', text:'// reduce((acc,p) => acc + p.price, 0)' },
-    { cls:'ok',    text:`Total catalogue value → ₦${totalValue.toLocaleString()}` },
-    { cls:'label', text:'// reduce — total stock units' },
-    { cls:'info',  text:`Total stock           → ${totalStock} units` },
-    { cls:'label', text:'// reduce — group by category' },
-    ...Object.entries(byCategory).map(([cat,n]) => ({ cls:'warn', text:`  ${cat.padEnd(12)} → ${n} products` })),
-  ]);
-}
-
-function runForEach() {
-  const cart = [
-    { name:"MacBook Air",   qty:1, price:450000 },
-    { name:"USB Hub",       qty:2, price:8000   },
-    { name:"Mouse",         qty:1, price:12000  },
-  ];
-  let receiptTotal = 0;
-  const lines = [];
-  lines.push({ cls:'ok', text:'=== STUDENT TECH STORE RECEIPT ===' });
-  cart.forEach((item, i) => {
-    const lineTotal = item.price * item.qty;
-    receiptTotal += lineTotal;
-    lines.push({ cls:'info', text:`${i+1}. ${item.name.padEnd(14)} x${item.qty}  = ₦${lineTotal.toLocaleString()}` });
+  // ── OBJECT CONSTRUCTOR using ES6 shorthand ─────────────────
+  // Arrow function used as a factory (no 'new' keyword needed)
+  const createStudent = (name, score, course, year) => ({
+    id: Date.now() + Math.random(), // unique id
+    name,                           // ES6 shorthand property
+    score: Number(score),
+    course,
+    year: Number(year),
+    grade: getGrade(score),         // computed at creation
+    enrolled: new Date().toLocaleDateString()
   });
-  lines.push({ cls:'label', text:'──────────────────────────────────' });
-  lines.push({ cls:'ok',    text:`TOTAL: ₦${receiptTotal.toLocaleString()}` });
-  writeConsole('out-foreach', lines);
-}
 
-function runObjects() {
-  const product = {
-    id:1, name:"MacBook Air M2", price:450000, category:"laptop", inStock:true,
-    priceWithTax() { return this.price * 1.075; },
-    summary()      { return `${this.name} — ₦${this.price.toLocaleString()}`; }
+  // ── PURE FUNCTION using Arrow + Ternary ────────────────────
+  const getGrade = score => {
+    if (score >= 90) return 'A';
+    if (score >= 75) return 'B';
+    if (score >= 50) return 'C';
+    return 'F';
   };
-  const { name, price, category } = product;
-  const discounted = { ...product, price: 400000 };
-  writeConsole('out-objects', [
-    { cls:'label', text:'// Object method' },
-    { cls:'ok',    text:`product.summary()      → ${product.summary()}` },
-    { cls:'ok',    text:`product.priceWithTax() → ₦${product.priceWithTax().toLocaleString()}` },
-    { cls:'label', text:'// Destructuring' },
-    { cls:'info',  text:`{ name, price, category } → "${name}", ${price}, "${category}"` },
-    { cls:'label', text:'// Spread operator (clone + override price)' },
-    { cls:'warn',  text:`original price    → ₦${product.price.toLocaleString()}` },
-    { cls:'ok',    text:`discounted.price  → ₦${discounted.price.toLocaleString()}` },
-    { cls:'label', text:'// Object.keys / Object.values' },
-    { cls:'info',  text:`keys: [${Object.keys(product).filter(k=>typeof product[k]!=='function').join(', ')}]` },
-  ]);
-}
 
-function runCaseStudy() {
-  const TAX = 0.075;
-  const withTax     = price => +(price * (1+TAX)).toFixed(2);
-  const formatPrice = n => `₦${n.toLocaleString()}`;
-  const isAffordable= (p, budget) => p.price <= budget;
+  // ── ARRAY.MAP — render rows ────────────────────────────────
+  const renderRows = (list) => {
+    // .map() transforms each student object into an HTML string
+    return list.map((s, index) => `
+      <tr>
+        <td style="color:var(--muted);font-family:'Space Mono',monospace;font-size:0.7rem">${index + 1}</td>
+        <td><strong>${s.name}</strong></td>
+        <td><span class="course-tag">${s.course}</span></td>
+        <td style="font-family:'Space Mono',monospace">${s.score}</td>
+        <td><span class="grade-badge grade-${s.grade}">${s.grade}</span></td>
+        <td style="color:var(--muted);font-size:0.75rem">Yr ${s.year}</td>
+        <td><button class="btn-danger" onclick="removeStudent(${s.id})">✕</button></td>
+      </tr>
+    `).join('');  // join array of strings into one HTML block
+  };
 
-  const receiptLines = products.map(p =>
-    `${p.name.substring(0,22).padEnd(22)} ${formatPrice(p.price)}`
-  );
-  const affordable = products.filter(p => isAffordable(p,100000)).map(p=>p.name);
-  const storeValue  = products.reduce((s,p) => s+p.price, 0);
-  const avgPrice    = Math.round(storeValue / products.length);
+  // ── ARRAY.FILTER — subset by grade ────────────────────────
+  const getFiltered = (list, filter) => {
+    if (filter === 'all') return list;
+    return list.filter(s => s.grade === filter); // .filter() returns subset
+  };
 
-  const lines = [
-    { cls:'ok',    text:'=== STUDENT TECH STORE RECEIPT ===' },
-    ...receiptLines.map(l => ({ cls:'log', text:l })),
-    { cls:'label', text:'──────────────────────────────────────' },
-    { cls:'ok',    text:`Catalogue value:  ${formatPrice(storeValue)}` },
-    { cls:'info',  text:`Average price:    ${formatPrice(avgPrice)}` },
-    { cls:'warn',  text:`Under ₦100,000:   ${affordable.join(', ')}` },
-    { cls:'label', text:'──────────────────────────────────────' },
-    { cls:'ok',    text:'✅  All ES6 concepts demonstrated successfully!' },
-  ];
-  writeConsole('out-casestudy', lines);
-}
+  // ── ARRAY.REDUCE — compute statistics ─────────────────────
+  const computeStats = (list) => {
+    if (list.length === 0) return { total: 0, avg: '—', passing: 0, top: '—' };
 
-/* ═══════════════════════════════════════════
-   SCROLL NAV
-═══════════════════════════════════════════ */
-function scrollTo(id) {
-  document.getElementById(id).scrollIntoView({ behavior:'smooth', block:'start' });
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
+    const total = list.length;
 
-/* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
-updateStats();
-renderGrid(products);
-buildReduceVis();
-buildObjectTable();
+    // reduce: accumulate sum of all scores
+    const sum = list.reduce((acc, s) => acc + s.score, 0);
+    const avg = (sum / total).toFixed(1);
+
+    // filter + length = passing count
+    const passing = list.filter(s => s.score >= 50).length;
+
+    // reduce: find maximum score
+    const top = list.reduce((max, s) => s.score > max ? s.score : max, 0);
+
+    return { total, avg, passing, top };  // object shorthand
+  };
+
+  // ── UPDATE DOM ─────────────────────────────────────────────
+  const updateUI = () => {
+    // Destructuring assignment from the returned object
+    const { total, avg, passing, top } = computeStats(students);
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-avg').textContent = avg;
+    document.getElementById('stat-pass').textContent = passing;
+    document.getElementById('stat-top').textContent = top;
+
+    const filtered = getFiltered(students, currentFilter);
+    const tbody = document.getElementById('student-tbody');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No students match this filter</td></tr>`;
+    } else {
+      tbody.innerHTML = renderRows(filtered);
+    }
+  };
+
+  // ── ADD STUDENT ────────────────────────────────────────────
+  const addStudent = () => {
+    // Destructuring from DOM elements
+    const name  = document.getElementById('inp-name').value.trim();
+    const score = document.getElementById('inp-score').value;
+    const course = document.getElementById('inp-course').value;
+    const year  = document.getElementById('inp-year').value;
+
+    if (!name || score === '') return clog('warn', '⚠ Please fill in name and score.');
+    if (score < 0 || score > MAX_SCORE) return clog('warn', `⚠ Score must be 0–${MAX_SCORE}`);
+
+    const student = createStudent(name, score, course, year);
+    students.push(student);       // mutate let array
+    updateUI();
+
+    // Template literal in console log
+    clog('log', `✓ Added: ${student.name} | ${student.course} | Score: ${student.score} | Grade: ${student.grade}`);
+
+    // Clear inputs
+    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-score').value = '';
+  };
+
+  // ── REMOVE STUDENT ─────────────────────────────────────────
+  const removeStudent = (id) => {
+    // filter returns a new array without the removed student
+    const removed = students.find(s => s.id === id);
+    students = students.filter(s => s.id !== id);
+    updateUI();
+    if (removed) clog('error', `✕ Removed: ${removed.name}`);
+  };
+
+  // ── FILTER CONTROLS ────────────────────────────────────────
+  const setFilter = (filter, btn) => {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filtered = getFiltered(students, filter);
+    clog('info', `Filter → "${filter}" | ${filtered.length} student(s) shown`);
+    updateUI();
+  };
+
+  // ── DEMO DATA ──────────────────────────────────────────────
+  const loadDemoData = () => {
+    // Array of objects (ES6 array literal)
+    const demos = [
+      { name: 'Ada Lovelace',    score: 95, course: 'JavaScript',  year: 2 },
+      { name: 'Alan Turing',     score: 88, course: 'Data Science', year: 3 },
+      { name: 'Grace Hopper',    score: 76, course: 'DevOps',       year: 1 },
+      { name: 'Linus Torvalds',  score: 92, course: 'Python',       year: 2 },
+      { name: 'Tim Berners-Lee', score: 61, course: 'Web Design',   year: 1 },
+      { name: 'Bjarne Stroustrup',score: 48, course: 'JavaScript', year: 3 },
+      { name: 'Margaret Hamilton',score: 83, course: 'Data Science', year: 2 },
+    ];
+
+    // forEach: side-effect iteration — no return value
+    demos.forEach(d => {
+      students.push(createStudent(d.name, d.score, d.course, d.year));
+    });
+
+    updateUI();
+    clog('info', `▶ Loaded ${demos.length} demo students`);
+  };
+
+  // ============================================================
+  //  CONSOLE DEMOS — show each concept explicitly
+  // ============================================================
+
+  const demoScope = () => {
+    clog('section', '══ DEMO: SCOPE ══════════════════════════════');
+
+    // var is function-scoped
+    function varScope() {
+      if (true) {
+        var x = 'I am var — function scoped';
+      }
+      return x; // accessible outside block
+    }
+    clog('log', `var scope → "${varScope()}"`);
+
+    // let is block-scoped
+    function letScope() {
+      let result;
+      if (true) {
+        let y = 'I am let — block scoped';
+        result = y; // readable inside block
+      }
+      // y is NOT accessible here — block scope
+      return result;
+    }
+    clog('log', `let scope (inside block) → "${letScope()}"`);
+    clog('warn', `let/const outside block → ReferenceError (block scope prevents access)`);
+
+    // Closure demo
+    const makeCounter = () => {
+      let count = 0;  // closed over by the returned arrow fn
+      return () => ++count;
+    };
+    const counter = makeCounter();
+    clog('log', `Closure counter: ${counter()}, ${counter()}, ${counter()}`);
+  };
+
+  const demoLetConst = () => {
+    clog('section', '══ DEMO: LET & CONST ════════════════════════');
+
+    let mutable = 'original';
+    clog('log', `let mutable = "${mutable}"`);
+    mutable = 'updated';
+    clog('log', `mutable reassigned → "${mutable}"`);
+
+    const PI = 3.14159;
+    clog('log', `const PI = ${PI}  ← cannot be reassigned`);
+
+    // const object — reference is const, properties are mutable
+    const student = { name: 'Alan', score: 88 };
+    student.score = 95; // allowed — mutation, not reassignment
+    clog('log', `const object property mutated → score: ${student.score}`);
+    clog('warn', `Trying to reassign "const student = {}" → TypeError: Assignment to constant variable`);
+  };
+
+  const demoArrow = () => {
+    clog('section', '══ DEMO: ARROW FUNCTIONS ════════════════════');
+
+    // Traditional function
+    function squareTraditional(n) { return n * n; }
+
+    // Arrow function — same behaviour
+    const squareArrow = n => n * n;
+
+    clog('log', `Traditional fn: squareTraditional(5) = ${squareTraditional(5)}`);
+    clog('log', `Arrow fn:        squareArrow(5) = ${squareArrow(5)}`);
+
+    // Multi-param arrow
+    const add = (a, b) => a + b;
+    clog('log', `Multi-param arrow: add(3, 7) = ${add(3, 7)}`);
+
+    // Arrow with block body
+    const greet = name => {
+      const msg = `Hello, ${name}!`;  // template literal
+      return msg;
+    };
+    clog('log', `Arrow + template literal: ${greet('Ada')}`);
+
+    // Arrow as callback
+    const nums = [1, 2, 3, 4, 5];
+    const doubled = nums.map(n => n * 2);
+    clog('result', `Arrow as callback in map: [${nums}] → doubled → [${doubled}]`);
+  };
+
+  const demoArrayMethods = () => {
+    clog('section', '══ DEMO: ARRAY METHODS ══════════════════════');
+
+    if (students.length === 0) {
+      clog('warn', '⚠ No students in registry. Load demo data first!');
+      return;
+    }
+
+    // ── MAP ──────────────────────────────────────────────────
+    clog('info', '--- .map() ---');
+    const names = students.map(s => s.name);
+    clog('result', `All names: [${names.join(', ')}]`);
+
+    const boosted = students.map(s => ({
+      ...s, score: Math.min(100, s.score + 5)  // spread operator
+    }));
+    clog('log', `Scores boosted by 5 (map + spread): ${boosted.map(s => s.score).join(', ')}`);
+
+    // ── FILTER ───────────────────────────────────────────────
+    clog('info', '--- .filter() ---');
+    const passing = students.filter(s => s.score >= 50);
+    clog('result', `Passing students (score ≥ 50): ${passing.length} / ${students.length}`);
+
+    const jsStudents = students.filter(s => s.course === 'JavaScript');
+    clog('log', `JavaScript students: ${jsStudents.map(s => s.name).join(', ') || 'none'}`);
+
+    // ── REDUCE ───────────────────────────────────────────────
+    clog('info', '--- .reduce() ---');
+    const total = students.reduce((acc, s) => acc + s.score, 0);
+    clog('result', `Sum of all scores: ${total}`);
+    clog('result', `Average score: ${(total / students.length).toFixed(2)}`);
+
+    const highScore = students.reduce((max, s) => s.score > max ? s.score : max, 0);
+    clog('result', `Highest score via reduce: ${highScore}`);
+
+    // Grade count via reduce (accumulator as object)
+    const gradeCounts = students.reduce((acc, s) => {
+      acc[s.grade] = (acc[s.grade] || 0) + 1;
+      return acc;
+    }, {});
+    clog('result', `Grade distribution: ${JSON.stringify(gradeCounts)}`);
+
+    // ── FOREACH ──────────────────────────────────────────────
+    clog('info', '--- .forEach() ---');
+    clog('log', 'Iterating all students:');
+    students.forEach((s, i) => {
+      clog('log', `  [${i}] ${s.name} — ${s.score} (${s.grade})`);
+    });
+  };
+
+  const demoObjects = () => {
+    clog('section', '══ DEMO: OBJECTS ════════════════════════════');
+
+    // Object literal
+    const student = {
+      name: 'Grace Hopper',
+      score: 76,
+      course: 'DevOps',
+      getInfo() { return `${this.name} | ${this.course} | ${this.score}`; }
+    };
+    clog('log', `Object literal: ${JSON.stringify({ name: student.name, score: student.score })}`);
+    clog('log', `Object method: ${student.getInfo()}`);
+
+    // Destructuring
+    const { name, score, course } = student;
+    clog('result', `Destructured → name: "${name}", score: ${score}, course: "${course}"`);
+
+    // Spread operator
+    const updated = { ...student, score: 99, grade: 'A' };
+    clog('result', `Spread + update: ${JSON.stringify({ name: updated.name, score: updated.score, grade: updated.grade })}`);
+
+    // Computed property names
+    const key = 'dynamicKey';
+    const obj = { [key]: 'computed value' };
+    clog('log', `Computed property: obj["${key}"] = "${obj[key]}"`);
+
+    // Object.keys / values / entries
+    clog('info', `Object.keys: [${Object.keys(student).join(', ')}]`);
+    clog('info', `Object.entries count: ${Object.entries(student).length}`);
+  };
+
+  const demoES6 = () => {
+    clog('section', '══ DEMO: ES6 FEATURES ═══════════════════════');
+
+    // Template literals
+    const lang = 'JavaScript';
+    const year = 2015;
+    clog('log', `Template literal: "ES6 was introduced in ${year} for ${lang}"`);
+
+    // Default parameters
+    const greet = (name = 'Student', greeting = 'Hello') => `${greeting}, ${name}!`;
+    clog('log', `Default params: ${greet()} | ${greet('Ada', 'Welcome')}`);
+
+    // Rest parameters
+    const sum = (...nums) => nums.reduce((a, b) => a + b, 0);
+    clog('result', `Rest params: sum(1,2,3,4,5) = ${sum(1, 2, 3, 4, 5)}`);
+
+    // Spread in function call
+    const scores = [78, 92, 65, 88];
+    clog('result', `Spread in Math.max: Math.max(...scores) = ${Math.max(...scores)}`);
+
+    // Array destructuring
+    const [first, second, ...rest] = scores;
+    clog('log', `Array destructuring: first=${first}, second=${second}, rest=[${rest}]`);
+
+    // Short-circuit evaluation
+    const user = null;
+    const displayName = user?.name ?? 'Anonymous';  // optional chaining + nullish coalescing
+    clog('result', `Optional chaining + nullish: user?.name ?? 'Anonymous' = "${displayName}"`);
+
+    // Symbol
+    const id = Symbol('id');
+    clog('log', `Symbol: typeof id = "${typeof id}", id.toString() = "${id.toString()}"`);
+
+    // Modules (ES6 import/export — conceptual in this single-file demo)
+    clog('info', `ES6 Modules: "export const fn = () => {}" & "import { fn } from './module.js'"`);
+    clog('info', `(Demonstrated conceptually — ES modules require a server environment)`);
+  };
+
+  const runAllDemos = () => {
+    clearConsole();
+    if (students.length === 0) loadDemoData();
+    demoScope();
+    demoLetConst();
+    demoArrow();
+    demoArrayMethods();
+    demoObjects();
+    demoES6();
+    clog('section', '══ ALL DEMOS COMPLETE ════════════════════════');
+  };
+
+  // ── CONSOLE LOGGER ─────────────────────────────────────────
+  const clog = (type, msg) => {
+    const out = document.getElementById('console-out');
+    const line = document.createElement('span');
+    line.className = `log-line ${type}`;
+
+    const prefix = {
+      log: '  ',
+      warn: '⚠ ',
+      error: '✕ ',
+      info: 'ℹ ',
+      section: '',
+      result: '→ '
+    }[type] || '';
+
+    line.textContent = prefix + msg;
+    out.appendChild(line);
+    out.appendChild(document.createTextNode('\n'));
+    out.scrollTop = out.scrollHeight;
+
+    // Also log to real browser console
+    const fn = type === 'warn' ? console.warn
+              : type === 'error' ? console.error
+              : console.log;
+    fn(`[ES6Lab] ${msg}`);
+  };
+
+  const clearConsole = () => {
+    document.getElementById('console-out').innerHTML =
+      '<span class="log-line info">// Console cleared</span>\n';
+  };
+
+  // ── INIT ───────────────────────────────────────────────────
+  updateUI();
 </script>
 </body>
 </html>
